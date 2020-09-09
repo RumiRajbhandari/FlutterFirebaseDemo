@@ -15,6 +15,7 @@ class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
   String email = "";
   String password = "";
+  String error = "";
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +57,7 @@ class _RegisterState extends State<Register> {
                   height: 20,
                 ),
                 TextFormField(
-                  validator: (val) => val.length<6 ? "Enter password 6 character long" : null,
+                  validator: (val) => val.length < 6 ? "Enter password 6 character long" : null,
                   obscureText: true,
                   onChanged: (value) {
                     password = value;
@@ -73,10 +74,24 @@ class _RegisterState extends State<Register> {
                   ),
                   onPressed: () async {
                     if (_formKey.currentState.validate()) {
-                      print(email);
-                      print(password);
+                      var result = await _auth.registerWithEmailAndPassword(email, password);
+                      if (result == null) {
+                        setState(() {
+                          error = "Please supply a valid email";
+                        });
+                      }
                     }
                   },
+                ),
+                SizedBox(
+                  height: 12.0,
+                ),
+                Text(
+                  error,
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 14,
+                  ),
                 )
               ],
             ),
